@@ -8,6 +8,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 
+
 class BaseDNN(nn.Module):
     def __init__(self, params):
         super().__init__()
@@ -37,6 +38,7 @@ class ButtomUpDNN1(BaseDNN):
 
     def forward(self, x):
         x = super().forward(x)
+
         if self.mode == "NoisyModel":
             x = F.softmax(x, dim=1)
             x = self.confusion(x)

@@ -91,7 +91,7 @@ def get_dataloader(batch_size=128, noisy=False):
     return train_loader, test_loader
 
 
-# Get data loader of MNIST dataset for buttom-up DNN v1 model
+# Get data loader of MNIST dataset for bottom-up DNN v1 model
 def get_dataloader_bu1(batch_size=128):
     train_set, test_set = load_mnist()
     train_data, train_targets = train_set.data, train_set.targets

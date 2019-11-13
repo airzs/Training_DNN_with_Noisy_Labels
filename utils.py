@@ -7,8 +7,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn import metrics
 
+np.random.seed(0)
 
 # Add weight decay of noisy layer to cross entropy loss
 class ButtomUpDNN2Loss(nn.Module):
@@ -54,19 +56,36 @@ class NLNNLoss(nn.Module):
         return - torch.mean(results)
 
 
+# Setting random seed
+def setup_seed(seed=0):
+     torch.manual_seed(seed)
+     torch.cuda.manual_seed_all(seed)
+     np.random.seed(seed)
+     np.random.seed(seed)
+     torch.backends.cudnn.deterministic = True
+
+
 # Q matrix used to synthesis noisy data
-def Q_matrix(n, base_prob=0.35):
+def Q_matrix(n, base_prob=0.4):
     identity = base_prob * np.identity(n)
     noise = np.random.random([n, n])
+    np.fill_diagonal(noise, 0.)
     noise = (1 - base_prob) * noise / noise.sum(axis=1, keepdims=1)
     qmatrix = identity + noise
+
+    # Save Q matrix
+    plt.matshow(qmatrix)
+    plt.colorbar()
+    plt.savefig("./imgs/true_Q.png")
     return qmatrix
+
 
 # Compute confusion matrix based on true label and predicted label
 def confusion_matrix(y_true, y_pred):
     cmatrix = torch.Tensor(metrics.confusion_matrix(y_true, y_pred))
     cmatrix = cmatrix / cmatrix.sum(dim=1, keepdim=True)
     return cmatrix
+
 
 # Adjust learning rate of optimizer
 def adjust_lr(optimizer, lr):
